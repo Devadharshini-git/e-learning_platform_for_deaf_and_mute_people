@@ -1,10 +1,11 @@
-import { useSpeech } from 'react-text-to-speech';
+import { useAccessibility } from '../context/AccessibilityContext';
 
 const useVoiceAssistant = () => {
-  const { speak, stop, isSpeaking } = useSpeech({ text: '' });
+  const { voiceEnabled } = useAccessibility();
 
   const say = (text) => {
-    stop();
+    if (!voiceEnabled) return; // ✅ stops speaking when voice is off
+    window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 0.9;
     utterance.pitch = 1;
@@ -16,7 +17,7 @@ const useVoiceAssistant = () => {
     window.speechSynthesis.cancel();
   };
 
-  return { say, stopSpeaking, isSpeaking };
+  return { say, stopSpeaking };
 };
 
 export default useVoiceAssistant;

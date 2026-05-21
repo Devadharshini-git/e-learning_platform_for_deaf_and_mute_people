@@ -1,268 +1,130 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
-import {
-  HandMetal,
-  ArrowRight,
-} from 'lucide-react';
+export default function Login() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
-const Login = () => (
-  <main
-    id="main-content"
-    className="
-      relative
-      flex
-      min-h-screen
-      items-center
-      justify-center
-      overflow-hidden
-      bg-[#f5f7fb]
-      px-6
-      py-16
-    "
-  >
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setError('');
+    if (!email || !password) {
+      setError('Please fill in all fields');
+      return;
+    }
+    setLoading(true);
+    const result = login(email, password);
+    if (result.success) {
+      navigate('/');
+    } else {
+      setError(result.message);
+    }
+    setLoading(false);
+  };
 
-    {/* BACKGROUND */}
-    <div className="absolute inset-0 -z-10">
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-[#5B4BFF] via-[#7A5CFF] to-[#D96DFF] flex items-center justify-center p-6 overflow-hidden">
+      <div className="w-full max-w-6xl rounded-[40px] overflow-hidden bg-white shadow-2xl">
+        <div className="grid lg:grid-cols-2 min-h-[700px]">
 
-      <div
-        className="
-          absolute
-          left-0
-          top-0
-          h-[450px]
-          w-[450px]
-          rounded-full
-          bg-blue-200/30
-          blur-3xl
-        "
-      />
+          {/* LEFT SIDE */}
+          <div className="relative hidden lg:flex flex-col justify-center overflow-hidden bg-gradient-to-br from-[#5B4BFF] via-[#8A63FF] to-[#FF7AA2] p-16 text-white">
+            <div className="absolute top-24 right-16 h-64 w-64 rounded-full bg-pink-300/20 blur-3xl" />
+            <div className="relative z-10 max-w-lg">
+              <h1 className="text-6xl font-black leading-tight">Welcome Back</h1>
+              <p className="mt-6 text-xl leading-relaxed text-white/80">
+                Sign in to continue your learning journey.
+              </p>
+              <p className="mt-8 text-lg leading-relaxed text-white/70">
+                Access your courses, track progress, and continue building amazing skills.
+              </p>
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 h-80">
+              <div className="absolute bottom-0 left-[-60px] h-24 w-[420px] rotate-[-38deg] rounded-full bg-gradient-to-r from-pink-400 to-orange-300 opacity-80"></div>
+              <div className="absolute bottom-28 left-44 h-20 w-72 rotate-[-38deg] rounded-full bg-gradient-to-r from-orange-300 to-pink-400 opacity-80"></div>
+              <div className="absolute bottom-6 left-[320px] h-16 w-60 rotate-[-38deg] rounded-full bg-gradient-to-r from-violet-400 to-pink-300 opacity-70"></div>
+            </div>
+          </div>
 
-      <div
-        className="
-          absolute
-          bottom-0
-          right-0
-          h-[450px]
-          w-[450px]
-          rounded-full
-          bg-violet-200/30
-          blur-3xl
-        "
-      />
+          {/* RIGHT SIDE */}
+          <div className="flex items-center justify-center bg-white px-8 py-16 sm:px-16">
+            <div className="w-full max-w-md">
+              <div className="text-center">
+                <h2 className="text-4xl font-black text-[#5B4BFF]">USER LOGIN</h2>
+              </div>
 
-    </div>
+              {/* Error message */}
+              {error && (
+                <div className="mt-6 bg-red-50 border border-red-200 text-red-600
+                  rounded-2xl px-5 py-3 text-sm font-medium text-center">
+                  ⚠️ {error}
+                </div>
+              )}
 
-    {/* LOGIN CARD */}
-    <div
-      className="
-        relative
-        w-full
-        max-w-md
-        overflow-hidden
-        rounded-[36px]
-        border
-        border-white/60
-        bg-white/80
-        p-10
-        backdrop-blur-2xl
-        shadow-[0_30px_80px_rgba(15,23,42,0.10)]
-      "
-    >
+              <form className="mt-10 space-y-6" onSubmit={handleSubmit}>
+                {/* EMAIL */}
+                <div className="relative">
+                  <Mail size={20} className="absolute left-5 top-1/2 -translate-y-1/2 text-[#6B5CFF]" />
+                  <input
+                    type="email"
+                    placeholder="your@email.com"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    className="w-full rounded-2xl bg-[#F5F3FF] py-5 pl-14 pr-5 text-base outline-none border border-transparent transition-all duration-300 focus:border-[#6B5CFF] focus:bg-white focus:shadow-lg"
+                  />
+                </div>
 
-      {/* TOP GLOW */}
-      <div
-        className="
-          absolute
-          right-0
-          top-0
-          h-40
-          w-40
-          rounded-full
-          bg-blue-100/40
-          blur-3xl
-        "
-      />
+                {/* PASSWORD */}
+                <div className="relative">
+                  <Lock size={20} className="absolute left-5 top-1/2 -translate-y-1/2 text-[#6B5CFF]" />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    className="w-full rounded-2xl bg-[#F5F3FF] py-5 pl-14 pr-14 text-base outline-none border border-transparent transition-all duration-300 focus:border-[#6B5CFF] focus:bg-white focus:shadow-lg"
+                  />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-500">
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
 
-      {/* HEADER */}
-      <div className="relative z-10 text-center">
+                {/* OPTIONS */}
+                <div className="flex items-center justify-between">
+                  <label className="flex items-center gap-2 text-sm text-slate-600">
+                    <input type="checkbox" /> Remember me
+                  </label>
+                  <button type="button" className="text-sm font-medium text-[#5B4BFF] hover:underline">
+                    Forgot password?
+                  </button>
+                </div>
 
-        <div
-          className="
-            mx-auto
-            flex
-            h-20
-            w-20
-            items-center
-            justify-center
-            rounded-[24px]
-            bg-slate-900
-            shadow-xl
-          "
-        >
-          <HandMetal size={34} className="text-white" />
+                {/* SUBMIT */}
+                <button type="submit" disabled={loading}
+                  className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-pink-500 to-[#5B4BFF] py-5 text-lg font-bold text-white shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl disabled:opacity-60">
+                  {loading ? 'Signing in...' : 'SIGN IN'}
+                  <ArrowRight size={20} className="transition-transform duration-300 group-hover:translate-x-1" />
+                </button>
+              </form>
+
+              <p className="mt-12 text-center text-sm text-slate-500">
+                Don't have an account?{' '}
+                <Link to="/register" className="ml-2 cursor-pointer font-semibold text-[#5B4BFF] hover:underline">
+                  Create an account
+                </Link>
+              </p>
+            </div>
+          </div>
         </div>
-
-        <h1
-          className="
-            mt-8
-            text-4xl
-            font-black
-            tracking-[-0.04em]
-            text-slate-900
-          "
-        >
-          Welcome Back
-        </h1>
-
-        <p className="mt-3 text-base text-slate-500">
-          Login to continue your learning journey
-        </p>
-
       </div>
-
-      {/* FORM */}
-      <div className="relative z-10 mt-10 space-y-6">
-
-        {/* EMAIL */}
-        <div>
-
-          <label
-            className="
-              mb-3
-              block
-              text-sm
-              font-semibold
-              text-slate-700
-            "
-          >
-            Email Address
-          </label>
-
-          <input
-            type="email"
-            placeholder="your@email.com"
-            aria-label="Email address"
-            className="
-              w-full
-              rounded-2xl
-              border
-              border-slate-200
-              bg-white/80
-              px-5
-              py-4
-              text-base
-              text-slate-900
-              outline-none
-              transition-all
-              duration-300
-              placeholder:text-slate-400
-              focus:border-blue-500
-              focus:ring-4
-              focus:ring-blue-100
-            "
-          />
-
-        </div>
-
-        {/* PASSWORD */}
-        <div>
-
-          <label
-            className="
-              mb-3
-              block
-              text-sm
-              font-semibold
-              text-slate-700
-            "
-          >
-            Password
-          </label>
-
-          <input
-            type="password"
-            placeholder="••••••••"
-            aria-label="Password"
-            className="
-              w-full
-              rounded-2xl
-              border
-              border-slate-200
-              bg-white/80
-              px-5
-              py-4
-              text-base
-              text-slate-900
-              outline-none
-              transition-all
-              duration-300
-              placeholder:text-slate-400
-              focus:border-blue-500
-              focus:ring-4
-              focus:ring-blue-100
-            "
-          />
-
-        </div>
-
-        {/* BUTTON */}
-        <button
-          className="
-            inline-flex
-            w-full
-            items-center
-            justify-center
-            gap-3
-            rounded-2xl
-            bg-slate-900
-            px-6
-            py-4
-            text-base
-            font-semibold
-            text-white
-            shadow-xl
-            transition-all
-            duration-300
-            hover:-translate-y-1
-            hover:bg-slate-800
-          "
-        >
-          Login
-          <ArrowRight size={18} />
-        </button>
-
-      </div>
-
-      {/* FOOTER */}
-      <p
-        className="
-          relative
-          z-10
-          mt-8
-          text-center
-          text-sm
-          text-slate-500
-        "
-      >
-        No account?
-        <Link
-          to="/register"
-          className="
-            ml-2
-            font-semibold
-            text-slate-900
-            transition-colors
-            hover:text-blue-600
-          "
-        >
-          Register here
-        </Link>
-      </p>
-
     </div>
-
-  </main>
-);
-
-export default Login;
+  );
+}

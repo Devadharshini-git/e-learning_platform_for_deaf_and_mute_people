@@ -1,82 +1,88 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useAuth } from '../../context/AuthContext';
+import {
+  Menu,
+  X,
+  Home,
+  BookOpen,
+  HandMetal,
+  BarChart3,
+} from "lucide-react";
 
 const navLinks = [
-  { to: '/', label: 'Home', icon: '🏠' },
-  { to: '/lessons', label: 'Lessons', icon: '📚' },
-  { to: '/practice', label: 'Practice', icon: '🤟' },
-  { to: '/progress', label: 'Progress', icon: '📊' },
+  { to: "/", label: "Home", icon: <Home size={18} /> },
+  { to: "/lessons", label: "Lessons", icon: <BookOpen size={18} /> },
+  { to: "/practice", label: "Practice", icon: <HandMetal size={18} /> },
+  { to: "/progress", label: "Progress", icon: <BarChart3 size={18} /> },
 ];
 
 const Navbar = () => {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { isLoggedIn, user, logout } = useAuth();
+
+  if (
+    location.pathname === "/login" ||
+    location.pathname === "/register"
+  ) {
+    return null;
+  }
 
   return (
-    <nav
-      role="navigation"
-      aria-label="Main navigation"
-      className="sticky top-0 z-50 backdrop-blur-xl
-      bg-white/70 border-b border-white/20 shadow-lg"
-    >
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-
-          {/* Logo */}
-          <Link
-            to="/"
-            aria-label="SignLearn Home"
-            className="flex items-center gap-3 group"
+    <header className="fixed top-0 left-0 right-0 z-50">
+      <nav
+        className="
+          mx-auto mt-4 flex max-w-7xl items-center justify-between
+          rounded-[28px] border border-white/20 bg-white/70
+          px-6 py-4 shadow-[0_10px_40px_rgba(0,0,0,0.08)] backdrop-blur-2xl
+        "
+      >
+        {/* LOGO */}
+        <Link to="/" className="flex items-center gap-4">
+          <div
+            className="
+              flex h-14 w-14 items-center justify-center rounded-2xl
+              bg-gradient-to-br from-blue-600 via-violet-600 to-purple-600
+              text-white shadow-lg
+            "
           >
-            <div
-              className="w-12 h-12 rounded-2xl bg-gradient-to-br
-              from-blue-600 to-purple-600 flex items-center
-              justify-center text-2xl shadow-lg
-              group-hover:scale-105 transition"
+            <HandMetal size={26} />
+          </div>
+          <div>
+            <h1
+              className="
+                text-2xl font-black tracking-tight bg-gradient-to-r
+                from-blue-600 to-violet-600 bg-clip-text text-transparent
+              "
             >
-              🤟
-            </div>
+              SignLearn
+            </h1>
+            <p className="text-xs font-medium text-slate-500">
+              AI Learning Platform
+            </p>
+          </div>
+        </Link>
 
-            <div className="leading-tight">
-              <h1
-                className="text-2xl font-black tracking-tight
-                bg-gradient-to-r from-blue-600 to-purple-600
-                bg-clip-text text-transparent"
-              >
-                SignLearn
-              </h1>
-
-              <p className="text-xs text-gray-500 font-medium">
-                AI Learning Platform
-              </p>
-            </div>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <ul
-            className="hidden md:flex items-center gap-2"
-            role="menubar"
-          >
-            {navLinks.map(link => {
+        {/* DESKTOP MENU */}
+        <div className="hidden items-center gap-3 lg:flex">
+          <ul className="flex items-center gap-2">
+            {navLinks.map((link) => {
               const active = location.pathname === link.to;
-
               return (
-                <li key={link.to} role="none">
+                <li key={link.to}>
                   <Link
                     to={link.to}
-                    role="menuitem"
-                    aria-current={active ? 'page' : undefined}
                     className={`
-                      relative flex items-center gap-2
-                      px-5 py-3 rounded-2xl
+                      flex items-center gap-2 rounded-2xl px-5 py-3
                       font-semibold transition-all duration-300
                       ${active
-                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
-                        : 'text-gray-700 hover:bg-gray-100 hover:text-blue-600'
+                        ? 'bg-gradient-to-r from-blue-600 to-violet-600 text-white shadow-lg'
+                        : 'text-slate-700 hover:bg-slate-100 hover:text-blue-600'
                       }
                     `}
                   >
-                    <span className="text-lg">{link.icon}</span>
+                    {link.icon}
                     {link.label}
                   </Link>
                 </li>
@@ -84,109 +90,145 @@ const Navbar = () => {
             })}
           </ul>
 
-          {/* Desktop Buttons */}
-          <div className="hidden md:flex items-center gap-3">
-            <Link
-              to="/login"
-              className="px-5 py-2.5 rounded-2xl
-              border border-gray-300 text-gray-700
-              font-semibold hover:border-blue-500
-              hover:text-blue-600 transition-all"
-            >
-              Login
-            </Link>
-
-            <Link
-              to="/register"
-              className="px-5 py-2.5 rounded-2xl
-              bg-gradient-to-r from-blue-600 to-purple-600
-              text-white font-bold shadow-lg
-              hover:scale-105 hover:shadow-xl
-              transition-all duration-300"
-            >
-              Register
-            </Link>
+          {/* AUTH BUTTONS */}
+          <div className="flex gap-2 items-center ml-4">
+            {isLoggedIn ? (
+              <div className="flex items-center gap-3">
+                <span className="font-semibold text-slate-700 text-sm">
+                  👋 Hi, {user?.name?.split(' ')[0]}!
+                </span>
+                <button
+                  onClick={logout}
+                  className="
+                    px-4 py-2 rounded-xl bg-red-500 text-white
+                    font-bold hover:bg-red-600 transition-all
+                  "
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="
+                    px-5 py-2 rounded-2xl border border-slate-200
+                    font-semibold text-slate-700 hover:bg-slate-100
+                    transition-all duration-300
+                  "
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  className="
+                    px-5 py-2 rounded-2xl bg-gradient-to-r from-blue-600
+                    to-violet-600 font-bold text-white shadow-lg
+                    hover:opacity-90 transition-all duration-300
+                  "
+                >
+                  Register
+                </Link>
+              </>
+            )}
           </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMenuOpen(prev => !prev)}
-            aria-label="Toggle menu"
-            aria-expanded={menuOpen}
-            className="md:hidden w-11 h-11 rounded-xl
-            bg-gray-100 text-2xl text-gray-700
-            hover:bg-gray-200 transition
-            focus-visible:ring-4 focus-visible:ring-yellow-400"
-          >
-            {menuOpen ? '✕' : '☰'}
-          </button>
         </div>
-      </div>
 
-      {/* Mobile Menu */}
+        {/* MOBILE BUTTON */}
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="
+            flex h-12 w-12 items-center justify-center rounded-2xl
+            bg-slate-100 text-slate-700 transition-all hover:bg-slate-200 lg:hidden
+          "
+        >
+          {menuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </nav>
+
+      {/* MOBILE MENU */}
       <div
         className={`
-          md:hidden overflow-hidden transition-all duration-300
-          ${menuOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}
+          overflow-hidden transition-all duration-300 lg:hidden
+          ${menuOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'}
         `}
       >
         <div
-          className="px-6 pb-6 pt-2 bg-white/90
-          backdrop-blur-xl border-t border-gray-100"
+          className="
+            mx-4 mt-3 rounded-[28px] border border-white/20
+            bg-white/90 p-5 shadow-2xl backdrop-blur-xl
+          "
         >
-          <ul className="flex flex-col gap-3" role="menu">
-            {navLinks.map(link => {
+          <ul className="space-y-3">
+            {navLinks.map((link) => {
               const active = location.pathname === link.to;
-
               return (
-                <li key={link.to} role="none">
+                <li key={link.to}>
                   <Link
                     to={link.to}
-                    role="menuitem"
                     onClick={() => setMenuOpen(false)}
                     className={`
-                      flex items-center gap-3
-                      px-5 py-4 rounded-2xl
-                      font-semibold transition-all
+                      flex items-center gap-3 rounded-2xl px-5 py-4
+                      font-semibold transition-all duration-300
                       ${active
-                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md'
-                        : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                        ? 'bg-gradient-to-r from-blue-600 to-violet-600 text-white'
+                        : 'bg-slate-50 text-slate-700 hover:bg-slate-100'
                       }
                     `}
                   >
-                    <span className="text-xl">{link.icon}</span>
+                    {link.icon}
                     {link.label}
                   </Link>
                 </li>
               );
             })}
-
-            {/* Mobile Buttons */}
-            <div className="flex gap-3 mt-4">
-              <Link
-                to="/login"
-                onClick={() => setMenuOpen(false)}
-                className="flex-1 text-center py-3 rounded-2xl
-                border border-gray-300 text-gray-700
-                font-semibold"
-              >
-                Login
-              </Link>
-
-              <Link
-                to="/register"
-                onClick={() => setMenuOpen(false)}
-                className="flex-1 text-center py-3 rounded-2xl
-                bg-gradient-to-r from-blue-600 to-purple-600
-                text-white font-bold shadow-lg"
-              >
-                Register
-              </Link>
-            </div>
           </ul>
+
+          {/* MOBILE AUTH */}
+          <div className="mt-5">
+            {isLoggedIn ? (
+              <div className="flex flex-col gap-3">
+                <p className="text-center font-semibold text-slate-700">
+                  👋 Hi, {user?.name?.split(' ')[0]}!
+                </p>
+                <button
+                  onClick={() => { logout(); setMenuOpen(false); }}
+                  className="
+                    w-full rounded-2xl bg-red-500 py-3 text-center
+                    font-bold text-white
+                  "
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-3">
+                <Link
+                  to="/login"
+                  onClick={() => setMenuOpen(false)}
+                  className="
+                    rounded-2xl border border-slate-200 py-3
+                    text-center font-semibold text-slate-700
+                  "
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  onClick={() => setMenuOpen(false)}
+                  className="
+                    rounded-2xl bg-gradient-to-r from-blue-600
+                    to-violet-600 py-3 text-center font-bold text-white shadow-lg
+                  "
+                >
+                  Register
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </nav>
+    </header>
   );
 };
 

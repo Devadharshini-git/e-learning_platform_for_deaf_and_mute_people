@@ -96,57 +96,33 @@ const Lessons = () => {
         {/* HEADER */}
         <div className="mx-auto max-w-4xl text-center">
 
-          {/* BADGE */}
-          <div
-            className="
-              inline-flex
-              items-center
-              gap-2
-              rounded-full
-              border
-              border-white/60
-              bg-white/80
-              px-5
-              py-2.5
-              backdrop-blur-xl
-              shadow-[0_10px_30px_rgba(15,23,42,0.06)]
-            "
-          >
-
-            <Sparkles size={16} className="text-blue-600" />
-
-            <span className="text-sm font-medium text-slate-700">
-              Interactive Learning Subjects
-            </span>
-
-          </div>
-
-          {/* TITLE */}
-          <h1
-            className="
-              mt-8
-              text-5xl
-              font-black
-              leading-[0.95]
-              tracking-[-0.05em]
-              text-slate-900
-              md:text-7xl
-            "
-          >
-            Choose Your
-            <span
-              className="
-                block
-                bg-gradient-to-r
-                from-blue-600
-                to-violet-600
-                bg-clip-text
-                text-transparent
-              "
-            >
-              Subject
-            </span>
-          </h1>
+          
+<section className="pt-6">
+  <h1
+  className="
+    text-5xl
+    font-black
+    leading-[0.95]
+    tracking-[-0.05em]
+    text-slate-900
+    md:text-7xl
+  "
+>
+    Choose Your
+    <span
+      className="
+        block
+        bg-gradient-to-r
+        from-blue-600
+        to-violet-600
+        bg-clip-text
+        text-transparent
+      "
+    >
+      Subject
+    </span>
+  </h1>
+</section>
 
           {/* DESCRIPTION */}
           <p

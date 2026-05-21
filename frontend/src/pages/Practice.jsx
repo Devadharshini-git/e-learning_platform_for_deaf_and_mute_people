@@ -1,521 +1,194 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import useVoiceAssistant from '../hooks/useVoiceAssistant';
 
-import {
-  HandMetal,
-  Brain,
-  Camera,
-  LineChart,
-  Globe,
-  Sparkles,
-  ScanSearch,
-} from 'lucide-react';
-
-const features = [
+const practices = [
   {
-    icon: Camera,
-    title: 'Live Camera Practice',
-    desc: 'Practice sign language directly using your webcam.',
+    id: 1, subject: 'math', icon: '➕', title: 'Math Practice',
+    desc: 'Practice numbers and shapes', color: 'from-blue-500 to-blue-700',
+    exercises: [
+      { q: 'How many sides does a triangle have?', options: ['2', '3', '4', '5'], answer: 1 },
+      { q: 'What comes after 4?', options: ['3', '6', '5', '7'], answer: 2 },
+      { q: 'What shape is round?', options: ['Square', 'Triangle', 'Circle', 'Rectangle'], answer: 2 },
+    ]
   },
   {
-    icon: Brain,
-    title: 'AI Feedback',
-    desc: 'Receive smart corrections and personalized suggestions.',
+    id: 2, subject: 'science', icon: '🔬', title: 'Science Practice',
+    desc: 'Practice animals and weather', color: 'from-green-500 to-green-700',
+    exercises: [
+      { q: 'What sound does a cat make?', options: ['Bark', 'Meow', 'Moo', 'Tweet'], answer: 1 },
+      { q: 'What gives us light during the day?', options: ['Moon', 'Stars', 'Sun', 'Lamp'], answer: 2 },
+      { q: 'Which animal has wings?', options: ['Dog', 'Fish', 'Cat', 'Bird'], answer: 3 },
+    ]
   },
   {
-    icon: LineChart,
-    title: 'Skill Tracking',
-    desc: 'Monitor progress and improve through daily practice.',
-  },
-  {
-    icon: Globe,
-    title: 'Accessible Learning',
-    desc: 'Built for inclusive and accessibility-first education.',
+    id: 3, subject: 'english', icon: '📖', title: 'English Practice',
+    desc: 'Practice letters and colors', color: 'from-purple-500 to-purple-700',
+    exercises: [
+      { q: 'A is for ___?', options: ['Ball', 'Cat', 'Apple', 'Dog'], answer: 2 },
+      { q: 'What color is the sky?', options: ['Red', 'Green', 'Yellow', 'Blue'], answer: 3 },
+      { q: 'B is for ___?', options: ['Apple', 'Banana', 'Cat', 'Dog'], answer: 1 },
+    ]
   },
 ];
 
-const stats = [
-  {
-    value: '95%',
-    label: 'Accuracy',
-  },
-  {
-    value: '24/7',
-    label: 'Practice',
-  },
-  {
-    value: 'AI',
-    label: 'Powered',
-  },
-];
+const PracticeSession = ({ practice, onFinish }) => {
+  const { say } = useVoiceAssistant();
+  const [current, setCurrent] = useState(0);
+  const [selected, setSelected] = useState(null);
+  const [score, setScore] = useState(0);
+  const [done, setDone] = useState(false);
+
+  const q = practice.exercises[current];
+
+  const handleAnswer = (idx) => {
+    if (selected !== null) return;
+    setSelected(idx);
+    if (idx === q.answer) {
+      setScore(s => s + 1);
+      say('Correct! Well done!');
+    } else {
+      say(`Not quite! The answer is ${q.options[q.answer]}`);
+    }
+  };
+
+  const handleNext = () => {
+    if (current < practice.exercises.length - 1) {
+      setCurrent(c => c + 1);
+      setSelected(null);
+    } else {
+      setDone(true);
+      say(`Practice complete! You got ${score + (selected === q.answer ? 1 : 0)} out of ${practice.exercises.length}!`);
+    }
+  };
+
+  if (done) return (
+    <div className="text-center py-12">
+      <div className="text-7xl mb-4">🏆</div>
+      <h2 className="text-3xl font-extrabold text-gray-800 mb-2">Practice Done!</h2>
+      <p className="text-xl text-gray-600 mb-8">
+        You scored <strong className="text-green-600">{score}</strong> out of <strong>{practice.exercises.length}</strong>!
+      </p>
+      <button onClick={onFinish}
+        className="bg-gradient-to-r from-blue-600 to-purple-600 text-white
+          px-8 py-3 rounded-2xl font-bold hover:opacity-90 transition-all">
+        Back to Practice
+      </button>
+    </div>
+  );
+
+  return (
+    <div className="max-w-xl mx-auto">
+      <div className="flex justify-between items-center mb-6">
+        <span className="text-sm text-gray-500 font-medium">
+          Question {current + 1} of {practice.exercises.length}
+        </span>
+        <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">
+          ⭐ {score} pts
+        </span>
+      </div>
+
+      <div className={`bg-gradient-to-r ${practice.color} text-white rounded-3xl p-8 text-center mb-6`}>
+        <p className="text-2xl font-bold">{q.q}</p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 mb-6">
+        {q.options.map((opt, idx) => {
+          let style = 'bg-white border-2 border-gray-200 hover:border-blue-400';
+          if (selected !== null) {
+            if (idx === q.answer) style = 'bg-green-100 border-2 border-green-500 text-green-700 font-bold';
+            else if (idx === selected) style = 'bg-red-100 border-2 border-red-400 text-red-700';
+          }
+          return (
+            <button key={idx} onClick={() => handleAnswer(idx)} disabled={selected !== null}
+              className={`p-4 rounded-2xl text-lg transition-all ${style}`}>
+              {opt}
+            </button>
+          );
+        })}
+      </div>
+
+      {selected !== null && (
+        <button onClick={handleNext}
+          className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white
+            py-4 rounded-2xl text-lg font-bold hover:opacity-90 transition-all">
+          {current < practice.exercises.length - 1 ? 'Next →' : 'See Results 🏆'}
+        </button>
+      )}
+    </div>
+  );
+};
 
 const Practice = () => {
-  return (
-    <main
-      id="main-content"
-      className="
-        relative
-        min-h-screen
-        overflow-hidden
-        bg-[#f5f7fb]
-        px-6
-        py-20
-      "
-    >
+  const { say } = useVoiceAssistant();
+  const { isLoggedIn } = useAuth();
+  const [activePractice, setActivePractice] = useState(null);
 
-      {/* BACKGROUND */}
-      <div className="absolute inset-0 -z-10">
-
-        <div
-          className="
-            absolute
-            left-0
-            top-0
-            h-[450px]
-            w-[450px]
-            rounded-full
-            bg-blue-200/30
-            blur-3xl
-          "
-        />
-
-        <div
-          className="
-            absolute
-            bottom-0
-            right-0
-            h-[450px]
-            w-[450px]
-            rounded-full
-            bg-violet-200/30
-            blur-3xl
-          "
-        />
-
-      </div>
-
-      <div className="mx-auto max-w-7xl">
-
-        {/* HEADER */}
-        <div className="mx-auto max-w-4xl text-center">
-
-          {/* BADGE */}
-          <div
-            className="
-              inline-flex
-              items-center
-              gap-2
-              rounded-full
-              border
-              border-white/60
-              bg-white/80
-              px-5
-              py-2.5
-              backdrop-blur-xl
-              shadow-[0_10px_30px_rgba(15,23,42,0.06)]
-            "
-          >
-
-            <Sparkles size={16} className="text-blue-600" />
-
-            <span className="text-sm font-medium text-slate-700">
-              AI Powered Interactive Practice
-            </span>
-
-          </div>
-
-          {/* TITLE */}
-          <h1
-            className="
-              mt-8
-              text-5xl
-              font-black
-              leading-[0.95]
-              tracking-[-0.05em]
-              text-slate-900
-              md:text-7xl
-            "
-          >
-            Practice
-            <span
-              className="
-                block
-                bg-gradient-to-r
-                from-blue-600
-                to-violet-600
-                bg-clip-text
-                text-transparent
-              "
-            >
-              Sign Language
-            </span>
-          </h1>
-
-          {/* DESCRIPTION */}
-          <p
-            className="
-              mx-auto
-              mt-8
-              max-w-3xl
-              text-lg
-              leading-relaxed
-              text-slate-600
-              md:text-xl
-            "
-          >
-            Improve your sign language skills with interactive AI-powered
-            exercises, real-time gesture recognition and accessibility-first
-            learning experiences.
-          </p>
-
+  if (!isLoggedIn) return (
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50
+      flex items-center justify-center px-6">
+      <div className="text-center">
+        <div className="text-7xl mb-6">🔒</div>
+        <h1 className="text-3xl font-extrabold text-gray-800 mb-4">Login to Practice!</h1>
+        <p className="text-gray-500 mb-8">Create an account to access practice sessions</p>
+        <div className="flex gap-4 justify-center">
+          <Link to="/login" className="bg-gradient-to-r from-blue-600 to-purple-600
+            text-white px-8 py-3 rounded-2xl font-bold hover:opacity-90">
+            Login
+          </Link>
+          <Link to="/register" className="bg-yellow-400 text-gray-900
+            px-8 py-3 rounded-2xl font-bold hover:bg-yellow-300">
+            Register
+          </Link>
         </div>
-
-        {/* MAIN SECTION */}
-        <section
-          className="
-            relative
-            mt-20
-            overflow-hidden
-            rounded-[40px]
-            border
-            border-white/60
-            bg-white/80
-            p-8
-            backdrop-blur-2xl
-            shadow-[0_30px_80px_rgba(15,23,42,0.08)]
-            md:p-12
-          "
-        >
-
-          {/* GLOW */}
-          <div
-            className="
-              absolute
-              right-0
-              top-0
-              h-72
-              w-72
-              rounded-full
-              bg-violet-200/30
-              blur-3xl
-            "
-          />
-
-          <div
-            className="
-              absolute
-              bottom-0
-              left-0
-              h-72
-              w-72
-              rounded-full
-              bg-blue-200/30
-              blur-3xl
-            "
-          />
-
-          <div
-            className="
-              relative
-              z-10
-              grid
-              grid-cols-1
-              items-center
-              gap-16
-              lg:grid-cols-2
-            "
-          >
-
-            {/* LEFT CONTENT */}
-            <div>
-
-              {/* LABEL */}
-              <div
-                className="
-                  inline-flex
-                  items-center
-                  gap-2
-                  rounded-full
-                  border
-                  border-blue-100
-                  bg-blue-50
-                  px-4
-                  py-2
-                  text-sm
-                  font-semibold
-                  text-blue-700
-                "
-              >
-                <Brain size={16} />
-                AI Assisted Learning
-              </div>
-
-              {/* TITLE */}
-              <h2
-                className="
-                  mt-8
-                  text-4xl
-                  font-black
-                  leading-tight
-                  tracking-[-0.04em]
-                  text-slate-900
-                  md:text-5xl
-                "
-              >
-                Interactive Practice
-                <span className="block text-slate-400">
-                  Coming Soon
-                </span>
-              </h2>
-
-              {/* DESCRIPTION */}
-              <p
-                className="
-                  mt-8
-                  max-w-2xl
-                  text-lg
-                  leading-relaxed
-                  text-slate-600
-                "
-              >
-                Students will soon be able to practice hand gestures
-                using webcam-based AI sign recognition with instant
-                visual feedback and guided improvements.
-              </p>
-
-              {/* FEATURES */}
-              <div
-                className="
-                  mt-12
-                  grid
-                  grid-cols-1
-                  gap-4
-                  sm:grid-cols-2
-                "
-              >
-
-                {features.map(feature => {
-                  const Icon = feature.icon;
-
-                  return (
-                    <div
-                      key={feature.title}
-                      className="
-                        rounded-[28px]
-                        border
-                        border-slate-100
-                        bg-slate-50/80
-                        p-5
-                        transition-all
-                        duration-300
-                        hover:-translate-y-1
-                        hover:shadow-lg
-                      "
-                    >
-
-                      <div
-                        className="
-                          flex
-                          h-14
-                          w-14
-                          items-center
-                          justify-center
-                          rounded-2xl
-                          bg-slate-900
-                          shadow-lg
-                        "
-                      >
-                        <Icon size={22} className="text-white" />
-                      </div>
-
-                      <h3
-                        className="
-                          mt-5
-                          text-lg
-                          font-bold
-                          tracking-tight
-                          text-slate-900
-                        "
-                      >
-                        {feature.title}
-                      </h3>
-
-                      <p
-                        className="
-                          mt-2
-                          text-sm
-                          leading-relaxed
-                          text-slate-500
-                        "
-                      >
-                        {feature.desc}
-                      </p>
-
-                    </div>
-                  );
-                })}
-
-              </div>
-
-            </div>
-
-            {/* RIGHT SIDE */}
-            <div className="flex justify-center">
-
-              <div className="relative w-full max-w-md">
-
-                {/* OUTER GLOW */}
-                <div
-                  className="
-                    absolute
-                    inset-0
-                    scale-110
-                    rounded-[40px]
-                    bg-gradient-to-br
-                    from-blue-500/20
-                    to-violet-500/20
-                    blur-3xl
-                  "
-                />
-
-                {/* DEVICE CARD */}
-                <div
-                  className="
-                    relative
-                    overflow-hidden
-                    rounded-[36px]
-                    border
-                    border-slate-700
-                    bg-[#0f172a]
-                    p-6
-                    shadow-[0_30px_80px_rgba(15,23,42,0.35)]
-                  "
-                >
-
-                  {/* CAMERA SCREEN */}
-                  <div
-                    className="
-                      relative
-                      flex
-                      aspect-video
-                      items-center
-                      justify-center
-                      overflow-hidden
-                      rounded-[28px]
-                      border
-                      border-slate-700
-                      bg-black
-                    "
-                  >
-
-                    {/* SCREEN GLOW */}
-                    <div
-                      className="
-                        absolute
-                        inset-0
-                        bg-gradient-to-br
-                        from-blue-500/10
-                        to-violet-500/10
-                      "
-                    />
-
-                    <div className="relative z-10 text-center">
-
-                      <div
-                        className="
-                          mx-auto
-                          flex
-                          h-24
-                          w-24
-                          items-center
-                          justify-center
-                          rounded-[28px]
-                          bg-white/10
-                          backdrop-blur-xl
-                        "
-                      >
-                        <HandMetal size={46} className="text-white" />
-                      </div>
-
-                      <div
-                        className="
-                          mt-6
-                          inline-flex
-                          items-center
-                          gap-2
-                          rounded-full
-                          border
-                          border-emerald-500/20
-                          bg-emerald-500/10
-                          px-4
-                          py-2
-                          text-sm
-                          font-semibold
-                          text-emerald-300
-                        "
-                      >
-                        <ScanSearch size={16} />
-                        AI Detection Ready
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                  {/* STATS */}
-                  <div className="mt-6 grid grid-cols-3 gap-4">
-
-                    {stats.map(stat => (
-                      <div
-                        key={stat.label}
-                        className="
-                          rounded-2xl
-                          border
-                          border-slate-700
-                          bg-slate-800/80
-                          p-4
-                          text-center
-                        "
-                      >
-
-                        <p
-                          className="
-                            text-2xl
-                            font-black
-                            tracking-tight
-                            text-white
-                          "
-                        >
-                          {stat.value}
-                        </p>
-
-                        <p
-                          className="
-                            mt-1
-                            text-xs
-                            font-medium
-                            text-slate-400
-                          "
-                        >
-                          {stat.label}
-                        </p>
-
-                      </div>
-                    ))}
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </section>
-
       </div>
+    </main>
+  );
 
+  if (activePractice) return (
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-12 px-6">
+      <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl p-8">
+        <h1 className="text-2xl font-extrabold text-primary mb-8 text-center">
+          {activePractice.icon} {activePractice.title}
+        </h1>
+        <PracticeSession
+          practice={activePractice}
+          onFinish={() => setActivePractice(null)}
+        />
+      </div>
+    </main>
+  );
+
+  return (
+    <main id="main-content" className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-12 px-6">
+      <div className="max-w-4xl mx-auto pt-18">
+        <h1 className="text-4xl font-extrabold text-gray-800 mb-2"> Practice Zone</h1>
+        <p className="text-gray-500 mb-10 text-lg">Choose a subject and practice what you learned!</p>
+
+        <ul className="grid grid-cols-1 md:grid-cols-3 gap-6" role="list">
+          {practices.map(p => (
+            <li key={p.id}>
+              <button
+                onClick={() => { setActivePractice(p); say(`Starting ${p.title}`); }}
+                className="w-full block rounded-3xl overflow-hidden shadow-lg
+                  hover:shadow-2xl transition-all hover:-translate-y-2 text-left"
+              >
+                <div className={`bg-gradient-to-br ${p.color} p-10 text-center text-white`}>
+                  <span className="text-6xl block mb-3">{p.icon}</span>
+                  <h2 className="text-xl font-extrabold">{p.title}</h2>
+                </div>
+                <div className="bg-white p-4 text-center border-t-4 border-yellow-400">
+                  <p className="text-gray-500 text-sm">{p.desc}</p>
+                  <p className="text-primary font-bold text-sm mt-1">
+                    {p.exercises.length} questions
+                  </p>
+                </div>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
     </main>
   );
 };

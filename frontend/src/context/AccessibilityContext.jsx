@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
 const AccessibilityContext = createContext();
 
@@ -8,14 +8,43 @@ export const AccessibilityProvider = ({ children }) => {
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [language, setLanguage] = useState('en');
 
-  const toggleHighContrast = () => setHighContrast(prev => !prev);
-  const toggleVoice = () => setVoiceEnabled(prev => !prev);
+  const toggleHighContrast = () => {
+    setHighContrast(prev => !prev);
+    console.log('Contrast toggled');
+  };
+
+  const toggleVoice = () => {
+  setVoiceEnabled(prev => {
+    const newValue = !prev;
+    if (!newValue) {
+      window.speechSynthesis.cancel(); // ✅ immediately stops
+    }
+    return newValue;
+  });
+};
+
   const increaseFontSize = () => setFontSize(prev =>
     prev === 'normal' ? 'large' : prev === 'large' ? 'xlarge' : 'xlarge'
   );
+
   const decreaseFontSize = () => setFontSize(prev =>
     prev === 'xlarge' ? 'large' : prev === 'large' ? 'normal' : 'normal'
   );
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (fontSize === 'large') root.style.fontSize = '20px';
+    else if (fontSize === 'xlarge') root.style.fontSize = '24px';
+    else root.style.fontSize = '16px';
+  }, [fontSize]);
+
+  useEffect(() => {
+    if (highContrast) {
+      document.body.classList.add('high-contrast');
+    } else {
+      document.body.classList.remove('high-contrast');
+    }
+  }, [highContrast]);
 
   return (
     <AccessibilityContext.Provider value={{
