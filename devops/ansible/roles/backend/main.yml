@@ -1,0 +1,26 @@
+---
+- name: Check if backend container is running
+  command: docker ps -q -f name=signlearn-backend
+  register: backend_container
+  changed_when: false
+
+- name: Print backend status
+  debug:
+    msg: "Backend container ID: {{ backend_container.stdout | default('not running') }}"
+
+- name: Build backend Docker image
+  command: docker-compose -f {{ app_dir }}/docker-compose.yml build backend
+  when: backend_container.stdout == ""
+
+- name: Start backend container
+  command: docker-compose -f {{ app_dir }}/docker-compose.yml up -d backend
+  when: backend_container.stdout == ""
+
+- name: Verify backend is running
+  command: docker ps -f name=signlearn-backend
+  register: backend_verify
+  changed_when: false
+
+- name: Backend deployment status
+  debug:
+    msg: "{{ backend_verify.stdout_lines }}"

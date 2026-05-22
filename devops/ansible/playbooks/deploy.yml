@@ -1,0 +1,61 @@
+---
+- name: SignLearn — Full Deployment
+  hosts: local
+  become: false
+
+  vars:
+    app_dir: /var/jenkins_home/workspace/signlearn-pipeline
+    frontend_port: 3000
+    backend_port: 8000
+
+  tasks:
+
+    - name: Print deployment start
+      debug:
+        msg: "🚀 Starting SignLearn deployment..."
+
+    - name: Stop existing containers
+      command: docker-compose -f {{ app_dir }}/docker-compose.yml down --remove-orphans
+      ignore_errors: yes
+
+    - name: Remove old containers if exist
+      command: docker rm -f signlearn-frontend signlearn-backend
+      ignore_errors: yes
+
+    - name: Build all images
+      command: docker-compose -f {{ app_dir }}/docker-compose.yml build
+      register: build_result
+
+    - name: Print build result
+      debug:
+        msg: "Build completed successfully"
+
+    - name: Start all containers
+      command: docker-compose -f {{ app_dir }}/docker-compose.yml up -d
+      register: deploy_result
+
+    - name: Wait for containers to start
+      pause:
+        seconds: 10
+
+    - name: Check frontend container
+      command: docker ps -f name=signlearn-frontend
+      register: frontend_status
+      changed_when: false
+
+    - name: Check backend container
+      command: docker ps -f name=signlearn-backend
+      register: backend_status
+      changed_when: false
+
+    - name: Print frontend status
+      debug:
+        msg: "{{ frontend_status.stdout_lines }}"
+
+    - name: Print backend status
+      debug:
+        msg: "{{ backend_status.stdout_lines }}"
+
+    - name: Deployment complete
+      debug:
+        msg: "✅ SignLearn deployed successfully on ports {{ frontend_port }} and {{ backend_port }}!"

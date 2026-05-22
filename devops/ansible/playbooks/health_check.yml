@@ -1,0 +1,50 @@
+---
+- name: SignLearn — Health Check
+  hosts: local
+  become: false
+
+  tasks:
+
+    - name: Print health check start
+      debug:
+        msg: "❤️ Running SignLearn health checks..."
+
+    - name: Check frontend container running
+      command: docker ps -q -f name=signlearn-frontend
+      register: frontend_health
+      changed_when: false
+
+    - name: Frontend health status
+      debug:
+        msg: "Frontend: {{ '✅ Running' if frontend_health.stdout else '❌ Not Running' }}"
+
+    - name: Check backend container running
+      command: docker ps -q -f name=signlearn-backend
+      register: backend_health
+      changed_when: false
+
+    - name: Backend health status
+      debug:
+        msg: "Backend: {{ '✅ Running' if backend_health.stdout else '❌ Not Running' }}"
+
+    - name: Check MySQL container running
+      command: docker ps -q -f name=mysql_db
+      register: mysql_health
+      changed_when: false
+
+    - name: MySQL health status
+      debug:
+        msg: "MySQL: {{ '✅ Running' if mysql_health.stdout else '❌ Not Running' }}"
+
+    - name: Get all running containers
+      command: docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+      register: all_containers
+      changed_when: false
+
+    - name: All containers status
+      debug:
+        msg: "{{ all_containers.stdout_lines }}"
+
+    - name: Health check complete
+      debug:
+        msg: "✅ Health check completed!"

@@ -1,0 +1,40 @@
+---
+- name: SignLearn — Environment Setup
+  hosts: local
+  become: false
+
+  tasks:
+    - name: Print setup start message
+      debug:
+        msg: "🚀 Setting up SignLearn environment..."
+
+    - name: Check Python version
+      command: python3 --version
+      register: python_version
+      changed_when: false
+
+    - name: Print Python version
+      debug:
+        msg: "Python: {{ python_version.stdout }}"
+
+    - name: Check Docker version
+      command: docker --version
+      register: docker_ver
+      changed_when: false
+
+    - name: Print Docker version
+      debug:
+        msg: "Docker: {{ docker_ver.stdout }}"
+
+    - name: Check Docker Compose version
+      command: docker-compose --version
+      register: compose_ver
+      changed_when: false
+
+    - name: Print Compose version
+      debug:
+        msg: "Docker Compose: {{ compose_ver.stdout }}"
+
+    - name: Setup complete
+      debug:
+        msg: "✅ Environment setup verified successfully!"

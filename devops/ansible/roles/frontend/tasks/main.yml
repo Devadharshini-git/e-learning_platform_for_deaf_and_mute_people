@@ -1,0 +1,26 @@
+---
+- name: Check if frontend container is running
+  command: docker ps -q -f name=signlearn-frontend
+  register: frontend_container
+  changed_when: false
+
+- name: Print frontend status
+  debug:
+    msg: "Frontend container ID: {{ frontend_container.stdout | default('not running') }}"
+
+- name: Build frontend Docker image
+  command: docker-compose -f {{ app_dir }}/docker-compose.yml build frontend
+  when: frontend_container.stdout == ""
+
+- name: Start frontend container
+  command: docker-compose -f {{ app_dir }}/docker-compose.yml up -d frontend
+  when: frontend_container.stdout == ""
+
+- name: Verify frontend is running
+  command: docker ps -f name=signlearn-frontend
+  register: frontend_verify
+  changed_when: false
+
+- name: Frontend deployment status
+  debug:
+    msg: "{{ frontend_verify.stdout_lines }}"

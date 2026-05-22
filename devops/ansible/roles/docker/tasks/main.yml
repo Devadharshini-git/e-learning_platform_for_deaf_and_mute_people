@@ -1,0 +1,27 @@
+---
+- name: Check Docker is installed
+  command: docker --version
+  register: docker_version
+  changed_when: false
+
+- name: Print Docker version
+  debug:
+    msg: "Docker version: {{ docker_version.stdout }}"
+
+- name: Check Docker Compose is installed
+  command: docker-compose --version
+  register: compose_version
+  changed_when: false
+
+- name: Print Docker Compose version
+  debug:
+    msg: "Docker Compose version: {{ compose_version.stdout }}"
+
+- name: Ensure Docker is running
+  command: docker ps
+  register: docker_status
+  changed_when: false
+
+- name: Print Docker status
+  debug:
+    msg: "Docker is running with {{ docker_status.stdout_lines | length }} containers"
