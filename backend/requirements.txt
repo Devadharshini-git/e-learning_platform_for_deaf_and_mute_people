@@ -3,7 +3,7 @@ uvicorn
 python-multipart
 pydantic
 python-dotenv
-openai-whisper
-tensorflow
+nltk
+scikit-learn
 numpy
-opencv-python
+httpx
