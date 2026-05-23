@@ -37,7 +37,7 @@
         msg: "MySQL: {{ '✅ Running' if mysql_health.stdout else '❌ Not Running' }}"
 
     - name: Get all running containers
-      command: docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+      command: docker ps
       register: all_containers
       changed_when: false
 

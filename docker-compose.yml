@@ -12,8 +12,6 @@ services:
       - APP_NAME=SignLearn API
       - APP_VERSION=1.0.0
       - DEBUG=False
-    volumes:
-      - ./backend:/app
     networks:
       - signlearn-network
     restart: unless-stopped

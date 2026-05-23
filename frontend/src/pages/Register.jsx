@@ -131,9 +131,8 @@ const Register = () => {
                 <label className="mb-2 block text-sm font-bold text-slate-700">I am a</label>
                 <select value={userType} onChange={e => setUserType(e.target.value)}
                   className="w-full rounded-2xl border border-slate-200 bg-slate-50/70 px-5 py-4 text-lg text-slate-800 outline-none transition-all duration-300 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100">
-                  <option value="student">👦 Student</option>
-                  <option value="parent">👨‍👩‍👧 Parent</option>
-                  <option value="teacher">👩‍🏫 Teacher</option>
+                  <option value="student">Student</option>
+                  <option value="teacher">Teacher</option>
                 </select>
               </div>
 
