@@ -130,7 +130,8 @@ const TopicList = () => {
         overflow-hidden
         bg-[#f5f7fb]
         px-6
-        py-16
+        pb-16
+        pt-28
       "
     >
 

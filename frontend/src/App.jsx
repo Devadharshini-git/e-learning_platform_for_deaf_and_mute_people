@@ -64,7 +64,7 @@ function App() {
             <VoiceAssistant />
 
             {/* MAIN CONTENT */}
-            <main id="main-content" className="relative z-10 transition-all duration-300">
+            <main id="main-content" className="relative z-10 transition-all duration-300 pt-24">
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/lessons" element={<Lessons />} />
