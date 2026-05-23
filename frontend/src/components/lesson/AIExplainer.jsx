@@ -23,9 +23,9 @@ const AIExplainer = ({ concept, subject }) => {
         onClick={handleExplain}
         disabled={loading}
         aria-label={`Get AI explanation for ${concept}`}
-        className="w-full bg-secondary text-white py-3 rounded-xl
-          hover:bg-purple-700 disabled:opacity-50 transition-all
-          focus-visible:ring-4 focus-visible:ring-yellow-400"
+        className="w-full bg-purple-600 text-white py-3 rounded-xl
+hover:bg-purple-700 disabled:opacity-50 transition-all
+focus-visible:ring-4 focus-visible:ring-yellow-400"
       >
         {loading ? '🤖 Thinking...' : '🤖 Explain Simply'}
       </button>

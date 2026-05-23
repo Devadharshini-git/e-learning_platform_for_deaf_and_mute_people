@@ -64,7 +64,7 @@ const PracticeSession = ({ practice, onFinish }) => {
   };
 
   if (done) return (
-    <div className="text-center py-12">
+    <div className="text-center py-12 pt-16">
       <div className="text-7xl mb-4">🏆</div>
       <h2 className="text-3xl font-extrabold text-gray-800 mb-2">Practice Done!</h2>
       <p className="text-xl text-gray-600 mb-8">
@@ -147,7 +147,7 @@ const Practice = () => {
   );
 
   if (activePractice) return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-12 px-6">
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-12 px-6 pt-30">
       <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl p-8">
         <h1 className="text-2xl font-extrabold text-primary mb-8 text-center">
           {activePractice.icon} {activePractice.title}

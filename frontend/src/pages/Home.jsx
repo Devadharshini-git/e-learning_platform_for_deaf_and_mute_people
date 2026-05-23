@@ -8,13 +8,14 @@ import {
   Accessibility,
   Sparkles,
   ArrowRight,
+  BookOpen
 } from 'lucide-react';
 
 import useVoiceAssistant from '../hooks/useVoiceAssistant';
 
 const features = [
   {
-    icon: HandMetal,
+    icon: BookOpen,
     title: 'Sign Language',
     desc: 'Every lesson taught through sign language animations',
   },
@@ -296,7 +297,7 @@ const Home = () => {
                     shadow-xl
                   "
                 >
-                  <HandMetal size={28} className="text-white" />
+                  <BookOpen size={28} className="text-white" />
                 </div>
 
               </div>

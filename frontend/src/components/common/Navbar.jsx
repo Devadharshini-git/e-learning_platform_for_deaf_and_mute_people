@@ -8,12 +8,14 @@ import {
   BookOpen,
   HandMetal,
   BarChart3,
+  NotebookPen,
+  Pencil
 } from "lucide-react";
 
 const navLinks = [
   { to: "/", label: "Home", icon: <Home size={18} /> },
-  { to: "/lessons", label: "Lessons", icon: <BookOpen size={18} /> },
-  { to: "/practice", label: "Practice", icon: <HandMetal size={18} /> },
+  { to: "/lessons", label: "Lessons", icon: <NotebookPen size={18} /> },
+  { to: "/practice", label: "Practice", icon: <Pencil size={18} /> },
   { to: "/progress", label: "Progress", icon: <BarChart3 size={18} /> },
 ];
 
@@ -47,7 +49,7 @@ const Navbar = () => {
               text-white shadow-lg
             "
           >
-            <HandMetal size={26} />
+            <BookOpen size={26} />
           </div>
           <div>
             <h1

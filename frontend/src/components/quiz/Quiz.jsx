@@ -62,11 +62,17 @@ const Quiz = ({ subject, topic, onClose }) => {
         You got <strong className="text-success">{score}</strong> out of <strong>{questions.length}</strong>!
       </p>
       <button
-        onClick={onClose}
-        className="bg-primary text-white px-8 py-3 rounded-xl hover:bg-blue-700"
-      >
-        Back to Lesson 📚
-      </button>
+  onClick={onClose}
+  className="
+    bg-blue-500 hover:bg-blue-600
+    text-white
+    px-8 py-3
+    rounded-xl
+    transition-all
+  "
+>
+  Back to Lesson 📚
+</button>
     </div>
   );
 
@@ -81,10 +87,9 @@ const Quiz = ({ subject, topic, onClose }) => {
       </div>
 
       {/* Question */}
-      <div className="bg-gradient-to-r from-primary to-secondary text-white
-        rounded-2xl p-6 mb-6 text-center">
-        <p className="text-xl font-bold">{question.question}</p>
-      </div>
+      <div className="bg-gradient-to-r from-blue-600 to-violet-600 rounded-2xl p-6 mb-6 text-center">
+  <p className="text-xl font-bold text-white">{question.question}</p>
+</div>
 
       {/* Options */}
       <div className="grid grid-cols-2 gap-3 mb-6">
@@ -122,13 +127,13 @@ const Quiz = ({ subject, topic, onClose }) => {
 
       {/* Next button */}
       {selected !== null && (
-        <button
-          onClick={handleNext}
-          className="w-full bg-primary text-white py-4 rounded-xl text-lg
-            font-bold hover:bg-blue-700 transition-all"
-        >
-          {current < questions.length - 1 ? 'Next Question →' : 'See Results 🏆'}
-        </button>
+       <button
+  onClick={handleNext}
+  className="w-full bg-gradient-to-r from-blue-600 to-violet-600 text-white py-4 rounded-xl text-lg
+    font-bold hover:opacity-90 transition-all"
+>
+  {current < questions.length - 1 ? 'Next Question →' : 'See Results 🏆'}
+</button>
       )}
     </div>
   );

@@ -57,6 +57,7 @@ const Lessons = () => {
         bg-[#f5f7fb]
         px-6
         py-20
+        pt-24
       "
     >
 

@@ -165,7 +165,7 @@ const TopicList = () => {
 
       </div>
 
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-7xl pt-16">
 
         {/* TOP BAR */}
         <div
