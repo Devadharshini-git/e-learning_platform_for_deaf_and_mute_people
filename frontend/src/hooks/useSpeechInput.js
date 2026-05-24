@@ -10,6 +10,7 @@ const useSpeechInput = (onCommand) => {
     { command: 'go to home', callback: () => onCommand('navigate', '/') },
     { command: 'go to practice', callback: () => onCommand('navigate', '/practice') },
     { command: 'go to progress', callback: () => onCommand('navigate', '/progress') },
+    { command: 'open map', callback: () => onCommand('navigate', '/lessons/math') },
     { command: 'open math', callback: () => onCommand('navigate', '/lessons/math') },
     { command: 'open science', callback: () => onCommand('navigate', '/lessons/science') },
     { command: 'open english', callback: () => onCommand('navigate', '/lessons/english') },
